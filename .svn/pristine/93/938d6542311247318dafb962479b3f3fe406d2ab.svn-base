@@ -1,0 +1,353 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package brokers;
+
+import domains.Member;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+/**
+ *
+ * @author sebaslab
+ */
+public class memberBroker {
+    
+    private Connection conn;
+    private ConnectionBroker cb;
+    
+    public memberBroker(){
+        try {
+            cb = ConnectionBroker.getConnection();
+            conn=cb.getDataSource().getConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+}
+    }
+    
+    public boolean memberValidateBroker(String username, String password){
+        boolean check = false;
+        try {
+                       
+            CallableStatement cs1 = conn.prepareCall("call validateMember(?,?)");
+            
+            cs1.setString(1,username);
+            cs1.setString(2,password);
+            
+            ResultSet rs=null;
+            
+            rs = cs1.executeQuery();
+            rs.next();
+            if(rs.getInt(1) > 0)
+                check = true;
+            
+            cs1.close();
+            rs.close();
+            conn.close();
+        }catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return check;
+    }
+    
+    public boolean memberCheckLockedBroker(String username){
+        boolean check = false;
+        
+        try {
+            
+            CallableStatement cs1 = conn.prepareCall("call memberGetLocked(?)");
+            
+            cs1.setString(1,username);
+            
+            ResultSet rs=null;
+            
+            rs = cs1.executeQuery();
+            rs.next();
+            if(rs.getBoolean(1))
+                check = true;
+            
+            cs1.close();
+            rs.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return check;
+    }
+    
+    public char memberCheckTypeBroker(String username){
+        char check = 0;
+        
+        try {
+                       
+            CallableStatement cs1 = conn.prepareCall("call memberGetType(?)");
+            
+            cs1.setString(1,username);
+            
+            ResultSet rs=null;
+            
+            rs = cs1.executeQuery();
+            rs.next();
+            check = rs.getString(1).charAt(0);
+            
+            cs1.close();
+            rs.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return check;
+    }
+    
+    public Member memberGetInfoBroker(String username){
+        Member member = null;
+        
+        try {
+                       
+            CallableStatement cs1 = conn.prepareCall("call memberGetMemberInfo(?)");
+            
+            cs1.setString(1,username);
+            
+            ResultSet rs=null;
+            
+            rs = cs1.executeQuery();
+            rs.next();
+            member = new Member(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),
+                        rs.getString(5),rs.getBoolean(6), rs.getString(7).charAt(0),
+                        rs.getString(8),rs.getString(9));
+            
+            cs1.close();
+            rs.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return member;
+    }
+    
+    public boolean memberCheckExistsBroker(String username)
+    {
+        boolean check = false;
+
+        try {
+            CallableStatement cs1 = conn.prepareCall("call memberExists(?)");
+
+            cs1.setString(1,username);
+
+            ResultSet rs=null;
+
+            rs = cs1.executeQuery();
+            rs.next();
+            if(rs.getInt(1) > 0)
+                check = true;
+
+            cs1.close();
+            rs.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return check;
+    }
+    
+    public void memberAddBroker(String firstname, String lastname, String username, 
+            String password, Boolean locked, String type){
+        
+        try {
+            
+            CallableStatement cs1 = conn.prepareCall("call addMember(?,?,?,?,?,?)");
+            
+            cs1.setString(1,firstname);
+            cs1.setString(2,lastname);
+            cs1.setString(3,username);
+            cs1.setString(4,password);
+            cs1.setBoolean(5,locked);
+            cs1.setString(6,type);
+            
+            cs1.execute();
+            
+            cs1.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void memberDeleteBroker(int idMember){
+        
+        try {
+            
+            CallableStatement cs1 = conn.prepareCall("call deleteMember(?)");
+            
+            cs1.setInt(1,idMember);
+            
+            cs1.execute();
+            
+            cs1.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public ArrayList<Member> memberGetAllBroker(){
+        
+        try {
+            
+            CallableStatement cs1 = conn.prepareCall("call memberGetAllData()");
+            
+            cs1.execute();
+            
+            ResultSet rs=null;
+            
+            rs = cs1.executeQuery();
+            
+            ArrayList<Member> list = new ArrayList();
+            
+            while (rs.next()){
+                Member member = new Member(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),
+                        rs.getString(5),rs.getBoolean(6), rs.getString(7).charAt(0),rs.getString(8),
+                        rs.getString(9));
+                list.add(member);
+            }
+            cs1.close();
+            rs.close();
+            conn.close();
+            
+            return list;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public void memberResetPasswordBroker(int idMember)
+    {
+        try {
+            CallableStatement cs1 = conn.prepareCall("call memberResetPassword(?)");
+            
+            cs1.setInt(1,idMember);
+            
+            cs1.execute();
+            
+            cs1.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void memberSetLockedBroker(int idMember, boolean lockStatus)
+    {
+        try {
+            CallableStatement cs1 = conn.prepareCall("call memberSetLocked(?, ?)");
+            
+            cs1.setInt(1,idMember);
+            cs1.setBoolean(2, lockStatus);
+            cs1.execute();
+            
+            cs1.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public int memberGetIdBroker(String username)
+    {
+        int memberId = 0;
+
+            try {
+                CallableStatement cs1 = conn.prepareCall("call memberGetId(?)");
+
+                cs1.setString(1,username);
+
+                ResultSet rs=null;
+
+                rs = cs1.executeQuery();
+                rs.next();
+                
+                memberId = rs.getInt(1);
+                
+
+                cs1.close();
+                rs.close();
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        return memberId;
+    }
+    
+    public void memberSaveStyleBroker(int id,String style)
+    {
+        try {
+
+                CallableStatement cs1 = conn.prepareCall("call memberSaveStyle(?,?)");
+
+                cs1.setInt(1,id);
+                cs1.setString(2,style);
+
+                cs1.execute();
+                
+                cs1.close();
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
+    
+    public void memberUpgradeInfoBroker(String username, String paypalInfo)
+    {
+        try {
+
+                CallableStatement cs1 = conn.prepareCall("call memberUpgradeInfo(?,?)");
+
+                cs1.setString(1,username);
+                cs1.setString(2,paypalInfo);
+
+                cs1.execute();
+                
+                cs1.close();
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
+    
+    public String memberGetStyleBroker(int id)
+    {
+        String style = null;
+        try {
+
+                CallableStatement cs1 = conn.prepareCall("call memberGetStyle(?)");
+
+                cs1.setInt(1,id);
+                ResultSet rs=null;
+
+                rs = cs1.executeQuery();
+                rs.next();
+                
+                style = rs.getString(1);
+
+                cs1.close();
+                rs.close();
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(memberBroker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        return style;
+    }
+}

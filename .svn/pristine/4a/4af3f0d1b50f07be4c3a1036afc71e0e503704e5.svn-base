@@ -1,0 +1,22 @@
+<%-- 
+    Document   : account
+    Created on : Apr 9, 2015, 8:42:44 AM
+    Author     : 633630
+--%>
+
+<%@page import="pagehelpers.AccountPageHelper"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <%
+            AccountPageHelper aph = new AccountPageHelper();
+            out.print(aph.createEditDetailsFormMember((String)session.getAttribute("username")));
+        %>
+    </body>
+</html>

@@ -1,0 +1,45 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pagehelpers;
+
+import core.MemberFunctions;
+import domains.Member;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author 633630
+ */
+public class AccountPageHelper {
+    
+    public AccountPageHelper()
+    {
+        
+    }
+    
+    public String createEditDetailsFormMember(String username)
+    { 
+        MemberFunctions mf = new MemberFunctions();
+        Member m = mf.getMemberInfo(username);
+        String form = "<h1>Welcome, " + m.getFirstName() + " " + m.getLastName() + "</h1><form action='MemberFunctions' type='POST'>"
+                + "New password: <input type='password' name='password'><br/>"
+                + "Upgrade User: <a href='upgradedregister.jsp'>Click here to upgrade account</a>"
+                + "</form>";
+        return form;
+    }
+    
+    public String createEditDetailsFormUpgraded(String username)
+    { 
+        MemberFunctions mf = new MemberFunctions();
+        Member m = mf.getMemberInfo(username);
+        String form = "<h1>Welcome, " + m.getFirstName() + " " + m.getLastName() + "</h1><form action='MemberFunctions' type='POST'>"
+                + "New password: <input type='password' name='password'><br/>"
+                + "Paypal Information: <input type='text' name='payPalChange'>"
+                + "</form>";
+        return form;
+    }
+    
+}

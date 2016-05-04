@@ -1,0 +1,120 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package domains;
+
+/**
+ *
+ * @author sebaslab
+ */
+public class Member {
+    private int idMember;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private boolean isLock;
+    private char accountType;
+    private String paypalAccountInfo;
+    private String pageStyle;
+
+    public Member() {
+    }
+
+    public Member(int idMember, String firstName, String lastName, String email, String password,
+            boolean isLock, char accountType, String paypalAccountInfo, String pageStyle) {
+        this.idMember = idMember;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.isLock = isLock;
+        this.accountType = accountType;
+        this.paypalAccountInfo = paypalAccountInfo;
+        this.pageStyle = pageStyle;
+    }
+
+    public int getIdMember() {
+        return idMember;
+    }
+
+    public void setIdMember(int idMember) {
+        this.idMember = idMember;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean getIsLock() {
+        return isLock;
+    }
+
+    public void setIsLock(boolean isLock) {
+        this.isLock = isLock;
+    }
+
+    public char getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(char accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getPaypalAccountInfo() {
+        return paypalAccountInfo;
+    }
+
+    public void setPaypalAccountInfo(String paypalAccountInfo) {
+        this.paypalAccountInfo = paypalAccountInfo;
+    }
+
+    public String getPageStyle() {
+        return pageStyle;
+    }
+
+    public void setPageStyle(String pageStyle) {
+        this.pageStyle = pageStyle;
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" + "idMember=" + idMember + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", isLock=" + isLock + ", accountType=" + accountType + ", paypalAccountInfo=" + paypalAccountInfo + ", pageStyle=" + pageStyle + '}';
+    }
+
+    
+    
+    
+    
+}

@@ -1,0 +1,189 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package operations;
+
+import core.MemberFunctions;
+import domains.Member;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.owasp.validator.html.*;
+
+/**
+ *
+ * @author 633630
+ */
+@WebServlet(name = "MemberOperations", urlPatterns = {"/MemberOperations"})
+public class MemberOperations extends HttpServlet {
+    @EJB
+    private MemberFunctions mf;
+    
+    
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     * 
+     * This servlet handles the registering of a new user, as well as any updates
+     * to the user through the account.jsp pages. It sanitizes the user's inputs as well to make sure
+     * there is no malicious code contained.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String firstname = request.getParameter("firstname");       
+        String lastname = request.getParameter("lastname");
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String register = request.getParameter("register");
+        String isMember = request.getParameter("member");
+        String isUpgraded = request.getParameter("upgraded");
+        String passwordChange = request.getParameter("passwordChange");
+        String type = request.getParameter("type");
+        String paypalInfo = request.getParameter("paypalInfo");
+        username = sanitize(username);
+        password = sanitize(password);
+        firstname = sanitize(firstname);
+        lastname = sanitize(lastname);
+        HttpSession session = request.getSession();
+        if(type==null)
+        {
+            type = "m";
+        }
+        
+        if(passwordChange!=null)
+        {
+            mf.memberChangePassword((String)session.getAttribute("username"), passwordChange);
+            if(isMember!=null)
+                response.sendRedirect("accountMember.jsp?message=Password changed");
+            else if(isUpgraded!=null)
+                response.sendRedirect("accountUpgraded.jsp?message=Password changed");
+        }
+        
+        if(paypalInfo!= null && !paypalInfo.equals(""))
+        {
+            
+            if(session.getAttribute("username") != null)
+            {
+                mf.memberUpgradeInfo((String)session.getAttribute("username"), paypalInfo);
+                Member member = mf.getMemberInfo((String)session.getAttribute("username"));
+                session.setAttribute("type", (""+member.getAccountType()));
+                response.sendRedirect("index.jsp?message=Account Upgraded");
+            }
+        }
+        /*
+            Checking if the fields in the register page have correct values and 
+            are not empty, then adding these values to the database if username
+            does not already exist using EJB and procedures
+            If fields are submitted incorrectly, return back to register page
+            with relevant message
+        */
+        if(register!=null)
+        {            
+            if(username!=null && !username.equals("") && password!=null && !password.equals("")
+                    && firstname!=null && !firstname.equals("") && lastname!=null && !lastname.equals(""))
+            {
+                if(!mf.memberCheckExists(username))
+                {
+                    mf.memberAdd(firstname, lastname, username, password, false, type);
+                    Member member = mf.getMemberInfo(username);
+                    session.setAttribute("username", member.getEmail());
+                    session.setAttribute("userId", member.getIdMember());
+                    session.setAttribute("firstName", member.getFirstName());
+                    session.setAttribute("lastName", member.getLastName());
+                    session.setAttribute("type", (""+member.getAccountType()));
+                    if(type.equals("u"))
+                    {
+                        response.sendRedirect("upgradedregister.jsp?");
+                    }
+                    else
+                    {
+                        response.sendRedirect("index.jsp?message=Account created");
+                    }
+                }
+                else
+                    response.sendRedirect("register.jsp?message=Account already exists");
+            }
+            else
+                response.sendRedirect("register.jsp?message=All values are required");
+        } 
+    }
+    
+    /**
+    * Sanitizes input using antisamy 1.5.3. This function works only for HTML
+    * input.
+    * @return String cleanInput
+    * @param dirtyInput String input you want to sanitize
+    */
+
+    private String sanitize(String dirtyInput)
+    {
+        String cleanInput = "";
+        try {
+            final String POLICY_LOCATION = getServletContext().getRealPath("WEB-INF/policy.xml");
+            Policy policy = Policy.getInstance(POLICY_LOCATION);
+            AntiSamy as = new AntiSamy();
+            CleanResults cr = as.scan(dirtyInput, policy, AntiSamy.DOM);
+            cleanInput = cr.getCleanHTML();
+        } catch (PolicyException | ScanException ex) {
+            Logger.getLogger(MemberOperations.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cleanInput;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

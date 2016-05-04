@@ -1,0 +1,31 @@
+<%-- 
+    Document   : transaction
+    Created on : Apr 9, 2015, 3:02:36 PM
+    Author     : CPRG352
+--%>
+
+<%@page import="pagehelpers.ShoppingCartPageHelper"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    Integer userid = 0;
+    try{
+        userid = (Integer) session.getAttribute("userId"); // if this causes a null pointer exception, it means the user is not logged in
+    }
+    catch(NullPointerException e)
+    {
+        response.sendRedirect("index.jsp?message=You are not logged in");
+    }
+    ShoppingCartPageHelper scph = new ShoppingCartPageHelper();
+%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Transaction History</title>
+    </head>
+    <body>
+        <h1>Transaction History</h1>
+        <a href="index.jsp">Home</a><br/>
+        <%= scph.getTransactionHistory(userid) %>
+    </body>
+</html>

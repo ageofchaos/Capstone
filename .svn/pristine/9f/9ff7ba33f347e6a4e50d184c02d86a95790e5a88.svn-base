@@ -1,0 +1,117 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package domains;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author sebaslab
+ */
+public class Photo {
+    private int idPhoto;
+    private int idMember;
+    private String title;
+    private String description;
+    private Timestamp uploadDate;
+    private int viewCount;
+    private ArrayList<Tag> tagList;
+    private String locationPhoto;
+
+    public Photo() {
+    }
+    /**
+     * 
+     * @param idPhoto
+     * @param idMember
+     * @param title
+     * @param description
+     * @param uploadDate
+     * @param viewCount
+     * @param tagList
+     * @param locationPhoto 
+     */
+    public Photo(int idPhoto, int idMember, String title, String description, Timestamp uploadDate, int viewCount, ArrayList<Tag> tagList, String locationPhoto) {
+        this.idPhoto = idPhoto;
+        this.idMember = idMember;
+        this.title = title;
+        this.description = description;
+        this.uploadDate = uploadDate;
+        this.viewCount = viewCount;
+        this.tagList = tagList;
+        this.locationPhoto = locationPhoto;
+    }
+
+    public int getIdPhoto() {
+        return idPhoto;
+    }
+
+    public void setIdPhoto(int idPhoto) {
+        this.idPhoto = idPhoto;
+    }
+
+    public int getIdMember() {
+        return idMember;
+    }
+
+    public void setIdMember(int idMember) {
+        this.idMember = idMember;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Timestamp getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(Timestamp uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    public int getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(int viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public ArrayList<Tag> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(ArrayList<Tag> tagList) {
+        this.tagList = tagList;
+    }
+
+    public String getLocationPhoto() {
+        return locationPhoto;
+    }
+
+    public void setLocationPhoto(String locationPhoto) {
+        this.locationPhoto = locationPhoto;
+    }
+
+    @Override
+    public String toString() {
+        return "Photo{" + "idPhoto=" + idPhoto + ", idMember=" + idMember + ", title=" + title + ", description=" + description + ", uploadDate=" + uploadDate + ", viewCount=" + viewCount + ", tagList=" + tagList + ", locationPhoto=" + locationPhoto + '}';
+    }
+}

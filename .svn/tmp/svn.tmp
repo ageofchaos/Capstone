@@ -1,0 +1,178 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package frontEndOperations;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ *
+ * @author 625798
+ */
+@WebServlet(name = "Nav", urlPatterns = {"/Nav"})
+public class Nav extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     * 
+     * This servlet manages the navigation bar, which contains links to the various pages of the website.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) 
+        {
+            HttpSession session = request.getSession(); 
+                
+                if (session.getAttribute("type") != null)
+                {
+                    if ((session.getAttribute("type")).equals("a"))
+                    {
+                        out.print("<div class='sels'>");
+                            out.print("<div class='sel1admin' style='z-index:3;'>");
+                                out.print("<div class='sel1adminhead'>");
+                                    out.print("<p><a href=\"shoppingCart.jsp\">Cart</a></p>");
+                                out.print("</div>");
+                                out.print("<div class='sel1adminbody'>");
+                                    out.print("Shopping Cart");
+                                out.print("</div>");
+                            out.print("</div>");
+                        
+                            out.print("<div class='sel2admin' style='z-index:3;'>");
+                                out.print("<div class='sel2adminhead'>");
+                                out.print("</div>");
+                                out.print("<div class='sel2adminbody'>");
+                                    out.print("<a href='LoginOperations?logout=true'>Logout </a>");
+                                    out.print("<a href='admin.jsp'> Admin Page</a>");
+                                out.print("</div>");
+                            out.print("</div>");
+                        out.print("</div>");
+                        }
+                            
+                        else if ((session.getAttribute("type")).equals("m"))
+                        {
+                            out.print("<div class='sels'>");
+                                out.print("<div class='sel1member' style='z-index:3;'>");
+                                    out.print("<div class='sel1memberhead'>");
+                                        out.print("<p><a href=\"shoppingCart.jsp\">Cart</a></p>");
+                                    out.print("</div>");
+                                    out.print("<div class='sel1memberbody'>");
+                                        out.print("Shopping Cart");
+                                    out.print("</div>");
+                                out.print("</div>");
+
+                                out.print("<div class='sel2member' style='z-index:3;'>");
+                                    out.print("<div class='sel2memberhead'>");
+                                    out.print("</div>");
+                                    out.print("<div class='sel2memberbody'>");
+                                        out.print("<a href='LoginOperations?logout=true'>Logout </a>");
+                                        out.print("<a href='accountMember.jsp'> My Account</a>");
+                                    out.print("</div>");
+                                out.print("</div>");
+                            out.print("</div>");
+                        }
+                        else if ((session.getAttribute("type")).equals("u"))
+                        {
+                            out.print("<div class='sels'>");
+                                out.print("<div class='sel1upgrade' style='z-index:3;'>");
+                                    out.print("<div class='sel1upgradehead'>");
+                                        out.print("<p><a href=\"shoppingCart.jsp\">Cart</a></p>");
+                                    out.print("</div>");
+                                    out.print("<div class='sel1upgradebody'>");
+                                        out.print("Shopping Cart");
+                                    out.print("</div>");
+                                out.print("</div>");
+
+                                out.print("<div class='sel2upgrade' style='z-index:3;'>");
+                                    out.print("<div class='sel2upgradehead'>");
+                                        
+                                    out.print("</div>");
+                                    out.print("<div class='sel2upgradebody'>");
+                                        out.print("<a href='LoginOperations?logout=true'>Logout </a>");
+                                        out.print("<a href='accountUpgraded.jsp'> My Account </a>");
+                                        out.print("<a href='fileupload.jsp?artist="+session.getAttribute("username")+"'> My Page </a>");
+                                        out.print("<a href='transaction.jsp'> Transactions </a>");
+                                    out.print("</div>");
+                                out.print("</div>");
+                            out.print("</div>");
+                        }
+                    }
+            else
+            {
+                out.print("<div class='sels'>");  
+                    out.print("<div class='sel1non' style='z-index:3;'>");
+                        out.print("<div class='sel1nonhead'>");
+                            
+                        out.print("</div>");
+                        out.print("<div class='sel1nonbody'>");
+                            out.print("<form action='LoginOperations' method='POST'>");
+                                out.print("<input required type='text' name='username' class='prettytextboxusername' placeholder='Username'>");
+                                out.print("<input required type='password' name='password' class='prettytextboxusername' placeholder='Password'>");
+                                out.print("<input type='submit' name='submit' value='Login' class='loginButton'>");
+                            out.print("</form>");
+                        out.print("</div>");
+                    out.print("</div>");
+                        out.print("<div class='sel2non' style='z-index:3;'>");
+                            out.print("<a href='register.jsp'><div class ='sel2nonhead'>");
+                                out.print("</div></a>");
+                        out.print("</div>");
+                out.print("</div>");
+            }                   
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

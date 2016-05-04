@@ -1,0 +1,163 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package core;
+
+import brokers.PhotoBroker;
+import domains.Member;
+import domains.Photo;
+import java.util.ArrayList;
+import static java.util.Collections.list;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import javax.ejb.Stateless;
+import javax.ejb.LocalBean;
+
+/**
+ *
+ * @author 633630
+ */
+@Stateless
+@LocalBean
+public class PhotoFunctions {
+
+    public PhotoFunctions() {
+                
+    }
+    
+    public void photoAdd(int idMember, int idLicensing, String title, 
+                        String description, String location)
+    {
+        PhotoBroker pb = new PhotoBroker();
+        pb.photoAddBroker(idMember, idLicensing, title, description, location);
+        pb.close();
+    }
+    public void photoAdd(int idMember, int idLicensing, String title, 
+                        String description, String location, int price, int exclusivePrice)
+    {
+        PhotoBroker pb = new PhotoBroker();
+        pb.photoAddBroker(idMember, idLicensing, title, description, location, price, exclusivePrice);
+        pb.close();
+    }
+    
+    public void photoDelete(int idPhoto)
+    {
+        PhotoBroker pb = new PhotoBroker();
+        pb.photoDeleteBroker(idPhoto);
+        pb.close();
+    }
+    
+    public void addTag(int idPhoto, String[] tags)
+    {
+        PhotoBroker pb = new PhotoBroker();
+        pb.photoAddTagsBroker(idPhoto, tags);
+        pb.close();
+    }
+    
+    public int getId(String location)
+    {
+        PhotoBroker pb = new PhotoBroker();
+        return pb.photoGetIdBroker(location);
+    }
+    
+    public ArrayList searchPhoto(String[] searchValue){
+        PhotoBroker pb = new PhotoBroker();
+        ArrayList<Photo> photoList = new ArrayList<Photo>();
+        for(int i=0; i<searchValue.length; i++)
+        {
+            photoList.addAll(pb.photoSearchBroker(searchValue[i]));
+        }
+        for(int i=photoList.size()-1;i>=0;i--){
+            for(int x=photoList.size()-1;x>=0;x--){
+                if(photoList.size()>i){
+                    if(x!=i){
+                        if(photoList.get(i).getIdPhoto() == photoList.get(x).getIdPhoto()){
+                            photoList.remove(i);
+                        }
+                    }
+                } 
+            }
+        }
+        pb.close();
+        return photoList;
+    }
+    
+    public ArrayList searchPhotoMember(int userId){
+        PhotoBroker pb = new PhotoBroker();
+        ArrayList<Photo> photoList = new ArrayList<Photo>();
+        photoList = pb.photoSearchMemberBroker(userId);
+        pb.close();
+        return photoList;
+    }
+    
+    public String[] getTagList(){
+        PhotoBroker pb = new PhotoBroker();
+        String oldTagList = pb.photoGetAllTagsBroker();
+        String[] tagList = oldTagList.split(",");
+        pb.close();
+        return tagList;
+    }
+    
+    public void incrementCount(int picId){
+        PhotoBroker pb = new PhotoBroker();
+        
+        pb.photoIncrementCountBroker(picId);
+        pb.close();
+    }
+    
+    public String getLocation(int photoId)
+    {
+        PhotoBroker pb = new PhotoBroker();
+        String location = pb.photoGetLocationBroker(photoId);
+        pb.close();
+        return location;
+    }
+    
+    public String getArtist(int photoId)
+    {
+        PhotoBroker pb = new PhotoBroker();
+        Member artist = pb.photoGetMemberNameFromPhotoID(photoId);
+        String artistName = artist.getEmail();
+        pb.close();
+        return artistName;
+    }
+    
+    public void updateTags(int idPhoto, String[] tags, String[] oldTagsList)
+    {
+        PhotoBroker pb = new PhotoBroker();
+
+        pb.updateTagsBroker(idPhoto, tags, oldTagsList);
+        pb.close();
+    }
+    
+    public void updatePhoto(int idPhoto, String description, String title, int regularPrice, int exclusivePrice)
+    {
+        PhotoBroker pb = new PhotoBroker();
+
+        pb.updatePhotoBroker(idPhoto, description, title, regularPrice, exclusivePrice);
+        pb.close();
+    }
+    
+    public int getRegularPrice(int idPhoto)
+    {
+        PhotoBroker pb = new PhotoBroker();
+
+        int price = pb.photoGetRegularPrice(idPhoto);
+        pb.close();
+        return price;
+    }
+    
+    public int getExclusivePrice(int idPhoto)
+    {
+        PhotoBroker pb = new PhotoBroker();
+
+        int price = pb.photoGetExclusivePrice(idPhoto);
+        pb.close();
+        return price;
+    }
+}

@@ -1,0 +1,95 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package core;
+
+import brokers.memberBroker;
+import domains.Member;
+import javax.ejb.Stateless;
+import javax.ejb.LocalBean;
+
+/**
+ *
+ * @author sebaslab
+ */
+@Stateless
+@LocalBean
+public class MemberFunctions {
+
+    public MemberFunctions(){
+        
+    }
+    
+    public boolean memberValidate(String username, String password){
+        memberBroker broker = new memberBroker();
+        boolean check = broker.memberValidateBroker(username, password);
+        return check;
+    }
+    
+    public boolean memberCheckLocked(String username){
+        memberBroker broker = new memberBroker();
+        boolean check = broker.memberCheckLockedBroker(username);
+        return check;
+    }
+    public char memberCheckType(String username){
+        memberBroker broker = new memberBroker();
+        char check = broker.memberCheckTypeBroker(username);
+        return check;
+    }
+    
+    public boolean memberCheckExists(String username){
+        memberBroker broker = new memberBroker();
+        boolean check = broker.memberCheckExistsBroker(username);
+        return check;
+    }
+    
+    public void memberAdd(String firstname, String lastname, String username, String password, boolean locked, String type){
+        memberBroker broker = new memberBroker();
+        broker.memberAddBroker(firstname, lastname, username, password, locked, type);
+    }
+    
+    public int memberGetId(String username)
+    {
+        memberBroker broker = new memberBroker();
+        return broker.memberGetIdBroker(username);
+    }
+    public String memberSaveStyle(int id,String hiddenbgc,
+            String hiddenft,String hiddenfc,String hiddenbgp)
+    {
+        memberBroker broker = new memberBroker();
+        String style= (hiddenbgc+","+hiddenft+","+hiddenfc+","+hiddenbgp);
+        broker.memberSaveStyleBroker(id, style);
+        return "Success";
+    }
+    
+    public String searchStyleMember(int userId){
+        memberBroker broker = new memberBroker();
+        String style = broker.memberGetStyleBroker(userId);
+        
+        
+        return style;
+    } 
+    
+    public Member getMemberInfo(String username)
+    {
+        memberBroker broker = new memberBroker();
+        Member member = broker.memberGetInfoBroker(username);
+        
+        return member;
+    } 
+
+    public void memberUpgradeInfo(String username, String paypalInfo)
+    {
+        memberBroker broker = new memberBroker();
+        broker.memberUpgradeInfoBroker(username, paypalInfo);
+        
+    }
+    
+    public void memberChangePassword(String username, String password)
+    {
+        memberBroker broker = new memberBroker();
+        broker.memberChangePasswordBroker(username, password);
+    }
+}
